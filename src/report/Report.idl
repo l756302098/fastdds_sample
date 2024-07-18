@@ -1,0 +1,12 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from mind_interfaces/msg/Report.msg
+// generated code does not contain a copyright notice
+
+
+module mind_interfaces {
+  module msg {
+    struct Report {
+      string<409600> data;
+    };
+  };
+};

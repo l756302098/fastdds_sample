@@ -38,7 +38,10 @@ target_link_libraries(ddsmsg_lib
 )
 
 message(STATUS "Configuring fastdds_samples...")
-add_executable(fastdds_samples src/main.cpp)
+add_executable(fastdds_samples src/main.cpp
+    src/wrapper/ClientWrapper.cpp
+    src/wrapper/ServiceWrapper.cpp
+)
 target_link_libraries(fastdds_samples 
     pthread
     ddsmsg_lib

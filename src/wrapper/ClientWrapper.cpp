@@ -12,7 +12,7 @@ namespace wk {
         return false;
     }
 
-    bool ClientWrapper::request(const std::string& data)
+    bool ClientWrapper::request(const std::string& data,std::string& resp)
     {
         ++ClientWrapper::index;
         if(!publisher_.publish(ClientWrapper::index,data))
@@ -21,7 +21,13 @@ namespace wk {
             return false;
         }
         //wait for response
-        
+        std::unique_lock lk(mtx);
+        if(cv.wait_for(lk,std::chrono::seconds(60))==std::cv_status::timeout)
+        {
+            std::cout << "request timeout." << std::endl;
+            return false;
+        }
+        resp = respData;
         return true;
     }
 
@@ -29,7 +35,11 @@ namespace wk {
     {
         std::cout << __func__ << index << " data:" << data << std::endl;
         //notify one
-        
+        {
+            std::lock_guard<std::mutex> guard(mtx);
+            respData = data;
+        }
+        cv.notify_one();
     }
 
 }

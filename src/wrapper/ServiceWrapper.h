@@ -1,7 +1,6 @@
 #pragma once
-#include "request/RequestSubscriber.h"
-#include "response/ResponsePublisher.h"
-#include "../log_define.h"
+#include "../request/RequestSubscriber.h"
+#include "../response/ResponsePublisher.h"
 
 namespace wk {
     class ServiceWrapper

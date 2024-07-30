@@ -6,9 +6,11 @@
 module mind_interfaces {
   module msg {
     struct Response {
+      string topic;
+
       int64 index;
 
-      string<409600> data;
+      string<1024> data;
     };
   };
 };

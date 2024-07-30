@@ -6,7 +6,9 @@
 module mind_interfaces {
   module msg {
     struct Report {
-      string<409600> data;
+      string topic;
+
+      string<1024> data;
     };
   };
 };

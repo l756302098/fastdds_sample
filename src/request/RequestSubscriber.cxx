@@ -28,7 +28,7 @@
 #include "RequestSubscriber.h"
 #include "RequestPubSubTypes.h"
 
-#include "../DDSConfig.hpp"
+#include "../DDSConfig.h"
 
 using namespace eprosima::fastdds::dds;
 
@@ -58,11 +58,12 @@ RequestSubscriber::~RequestSubscriber()
     DomainParticipantFactory::get_instance()->delete_participant(participant_);
 }
 
-bool RequestSubscriber::init(const std::string& name,std::function<void(const int64_t index,const std::string&)> cb)
+bool RequestSubscriber::init(const std::string& name,std::function<void(const int64_t index,const std::string&,const std::string&)> cb)
 {
     //CREATE THE PARTICIPANT
     DomainParticipantQos pqos;
     pqos.name("Participant_sub");
+    SLOG(INFO) << "ROS_DOMAIN_ID:" << wk::ROS_DOMAIN_ID;
     participant_ = DomainParticipantFactory::get_instance()->create_participant(wk::ROS_DOMAIN_ID, pqos);
     if (participant_ == nullptr)
     {
@@ -92,6 +93,8 @@ bool RequestSubscriber::init(const std::string& name,std::function<void(const in
     //CREATE THE READER
     DataReaderQos rqos = DATAREADER_QOS_DEFAULT;
     rqos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    rqos.endpoint().ignore_non_matching_locators = true;
+    rqos.endpoint().history_memory_policy = eprosima::fastrtps::rtps::DYNAMIC_RESERVE_MEMORY_MODE;
     listener_.callback = cb;
     reader_ = subscriber_->create_datareader(topic_, rqos, &listener_);
     if (reader_ == nullptr)
@@ -138,7 +141,7 @@ void RequestSubscriber::SubListener::on_data_available(
             std::cout << "Sample received, index=" << st.index()  << " data:" << st.data() << std::endl;
             if(this->callback)
             {
-                this->callback(st.index(),st.data().to_string());
+                this->callback(st.index(),st.topic(),st.data().to_string());
             }
         }
     }

@@ -6,6 +6,8 @@
 module mind_interfaces {
   module msg {
     struct Request {
+      string topic;
+
       int64 index;
 
       string<1024> data;

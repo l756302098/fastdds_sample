@@ -32,8 +32,6 @@
 #include <thread>
 #include <chrono>
 
-#include "../DDSConfig.hpp"
-
 using namespace eprosima::fastdds::dds;
 
 ReportPublisher::ReportPublisher()
@@ -64,11 +62,10 @@ ReportPublisher::~ReportPublisher()
 
 bool ReportPublisher::init(const std::string& topic)
 {
-    /* Initialize data_ here */
-
     //CREATE THE PARTICIPANT
     DomainParticipantQos pqos;
     pqos.name("Participant_pub");
+    SLOG(INFO) << "ROS_DOMAIN_ID:" << wk::ROS_DOMAIN_ID;
     participant_ = DomainParticipantFactory::get_instance()->create_participant(wk::ROS_DOMAIN_ID, pqos);
     if (participant_ == nullptr)
     {
@@ -94,7 +91,15 @@ bool ReportPublisher::init(const std::string& topic)
     {
         return false;
     }
-
+    // This example uses a DataWriter, but it can also be applied to DataReader entities
+    DataWriterQos writer_qos;
+    // Drop non matching locators
+    writer_qos.endpoint().ignore_non_matching_locators = true;
+    // The RTPSWriterQos is constructed with history_memory_policy = PREALLOCATED by default
+    // Change the history_memory_policy to DYNAMIC_RESERVE
+    writer_qos.endpoint().history_memory_policy = eprosima::fastrtps::rtps::DYNAMIC_RESERVE_MEMORY_MODE;
+    // Use modified QoS in the creation of the corresponding entity
+    writer_ = publisher_->create_datawriter(topic_, writer_qos);
     // CREATE THE WRITER
     writer_ = publisher_->create_datawriter(topic_, DATAWRITER_QOS_DEFAULT, &listener_);
     if (writer_ == nullptr)
@@ -127,15 +132,16 @@ void ReportPublisher::PubListener::on_publication_matched(
     }
 }
 
-bool ReportPublisher::publish(const std::string& payload)
+bool ReportPublisher::publish(const std::string& topic,const std::string& payload)
 {
-    std::cout << __func__ << std::endl;
+    //std::cout << __func__ << std::endl;
     while (listener_.matched == 0)
     {
-        std::cout << __func__ << " listener not matched." << std::endl;
+        SLOG(INFO) << "listener not matched." << payload;
         return false;
     }
     mind_interfaces::msg::Report st;
     st.data(payload);
+    st.topic(topic);
     return writer_->write(&st);
 }

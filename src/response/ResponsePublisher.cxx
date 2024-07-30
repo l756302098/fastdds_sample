@@ -32,7 +32,7 @@
 #include <thread>
 #include <chrono>
 
-#include "../DDSConfig.hpp"
+#include "../DDSConfig.h"
 
 using namespace eprosima::fastdds::dds;
 
@@ -69,6 +69,7 @@ bool ResponsePublisher::init(const std::string& name)
     //CREATE THE PARTICIPANT
     DomainParticipantQos pqos;
     pqos.name("Participant_pub");
+    SLOG(INFO) << "ROS_DOMAIN_ID:" << wk::ROS_DOMAIN_ID;
     participant_ = DomainParticipantFactory::get_instance()->create_participant(wk::ROS_DOMAIN_ID, pqos);
     if (participant_ == nullptr)
     {
@@ -96,7 +97,13 @@ bool ResponsePublisher::init(const std::string& name)
     }
 
     // CREATE THE WRITER
-    writer_ = publisher_->create_datawriter(topic_, DATAWRITER_QOS_DEFAULT, &listener_);
+    DataWriterQos writer_qos;
+    // Drop non matching locators
+    writer_qos.endpoint().ignore_non_matching_locators = true;
+    // The RTPSWriterQos is constructed with history_memory_policy = PREALLOCATED by default
+    // Change the history_memory_policy to DYNAMIC_RESERVE
+    writer_qos.endpoint().history_memory_policy = eprosima::fastrtps::rtps::DYNAMIC_RESERVE_MEMORY_MODE;
+    writer_ = publisher_->create_datawriter(topic_, writer_qos, &listener_);
     if (writer_ == nullptr)
     {
         return false;
@@ -127,12 +134,12 @@ void ResponsePublisher::PubListener::on_publication_matched(
     }
 }
 
-bool ResponsePublisher::publish(const int64_t index,const std::string& payload)
+bool ResponsePublisher::publish(const int64_t index,const std::string& topic,const std::string& payload)
 {
-    std::cout << "mind_interfaces::msg::Response DataWriter waiting for DataReaders." << std::endl;
+    //std::cout << "mind_interfaces::msg::Response DataWriter waiting for DataReaders." << std::endl;
     while (listener_.matched == 0)
     {
-        std::cout << __func__ << " listener not matched." << std::endl;
+        SLOG(INFO) << "listener not matched." << payload;
         return false;
     }
 
@@ -140,6 +147,7 @@ bool ResponsePublisher::publish(const int64_t index,const std::string& payload)
     mind_interfaces::msg::Response st;
     st.index(index);
     st.data(payload);
+    st.topic(topic);
     return writer_->write(&st);
     
 }

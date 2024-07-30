@@ -39,11 +39,17 @@ target_link_libraries(ddsmsg_lib
 
 message(STATUS "Configuring fastdds_samples...")
 add_executable(fastdds_samples src/main.cpp
+    src/DDSConfig.cpp
     src/wrapper/ClientWrapper.cpp
+    src/wrapper/ClientBase.cpp
     src/wrapper/ServiceWrapper.cpp
+    src/wrapper/ServiceBase.cpp
+    src/wrapper/PublisherWrapper.cpp
+    src/wrapper/SubscriberWrapper.cpp
 )
 target_link_libraries(fastdds_samples 
     pthread
+    glog
     ddsmsg_lib
     ${DDS_LIBS}/libfastcdr.so
     ${DDS_LIBS}/libfastrtps.so

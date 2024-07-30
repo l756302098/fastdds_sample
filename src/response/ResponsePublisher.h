@@ -28,7 +28,7 @@
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
-
+#include "../log_define.h"
 class ResponsePublisher
 {
 public:
@@ -39,7 +39,7 @@ public:
 
     bool init(const std::string& name);
 
-    bool publish(const int64_t index,const std::string& payload);
+    bool publish(const int64_t index,const std::string& topic,const std::string& payload);
 
 private:
 

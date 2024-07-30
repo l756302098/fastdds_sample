@@ -2,8 +2,8 @@
 #include <memory>
 #include "wrapper/ServiceWrapper.h"
 #include "wrapper/ClientWrapper.h"
-#include "report/ReportPublisher.h"
-#include "report/ReportSubscriber.h"
+#include "wrapper/PublisherWrapper.h"
+#include "wrapper/SubscriberWrapper.h"
 
 #include "json_msg/msgHead.h"
 
@@ -13,8 +13,8 @@ class logic
 {
 private:
     bool init;
-    ReportSubscriber hbSub,ipSub,infoSub,stateSub,taskStateSub;
-    ReportSubscriber mapSub,poseSub;
+    SubscriberWrapper hbSub,ipSub,infoSub,stateSub,taskStateSub;
+    SubscriberWrapper mapSub,poseSub;
     ClientWrapper client;
 public:
     logic(/* args */){}
@@ -73,6 +73,8 @@ public:
     void OnIp(const std::string& data)
     {
         std::cout << "data:" << data << std::endl;
+        JReportIp ip(data);
+        std::cout << "ip:" << ip.ip << " ssid:" << ip.ssid << std::endl;
     }
 
     void OnBaseInfo(const std::string& data)
@@ -83,6 +85,7 @@ public:
     void OnRobotState(const std::string& data)
     {
         std::cout << "data:" << data << std::endl;
+        
     }
 
     void OnTaskState(const std::string& data)

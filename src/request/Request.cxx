@@ -34,11 +34,13 @@ using namespace eprosima::fastcdr::exception;
 
 #include <utility>
 
-#define mind_interfaces_msg_Request_max_cdr_typesize 1037ULL;
+#define mind_interfaces_msg_Request_max_cdr_typesize 1301ULL;
 #define mind_interfaces_msg_Request_max_key_cdr_typesize 0ULL;
 
 mind_interfaces::msg::Request::Request()
 {
+    // string m_topic
+    m_topic ="";
     // long long m_index
     m_index = 0;
     // string m_data
@@ -50,11 +52,13 @@ mind_interfaces::msg::Request::~Request()
 {
 
 
+
 }
 
 mind_interfaces::msg::Request::Request(
         const Request& x)
 {
+    m_topic = x.m_topic;
     m_index = x.m_index;
     m_data = x.m_data;
 }
@@ -62,6 +66,7 @@ mind_interfaces::msg::Request::Request(
 mind_interfaces::msg::Request::Request(
         Request&& x) noexcept 
 {
+    m_topic = std::move(x.m_topic);
     m_index = x.m_index;
     m_data = std::move(x.m_data);
 }
@@ -70,6 +75,7 @@ mind_interfaces::msg::Request& mind_interfaces::msg::Request::operator =(
         const Request& x)
 {
 
+    m_topic = x.m_topic;
     m_index = x.m_index;
     m_data = x.m_data;
 
@@ -80,6 +86,7 @@ mind_interfaces::msg::Request& mind_interfaces::msg::Request::operator =(
         Request&& x) noexcept
 {
 
+    m_topic = std::move(x.m_topic);
     m_index = x.m_index;
     m_data = std::move(x.m_data);
 
@@ -90,7 +97,7 @@ bool mind_interfaces::msg::Request::operator ==(
         const Request& x) const
 {
 
-    return (m_index == x.m_index && m_data == x.m_data);
+    return (m_topic == x.m_topic && m_index == x.m_index && m_data == x.m_data);
 }
 
 bool mind_interfaces::msg::Request::operator !=(
@@ -114,6 +121,8 @@ size_t mind_interfaces::msg::Request::getCdrSerializedSize(
     size_t initial_alignment = current_alignment;
 
 
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.topic().size() + 1;
+
     current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
 
 
@@ -127,6 +136,7 @@ void mind_interfaces::msg::Request::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
 
+    scdr << m_topic.c_str();
     scdr << m_index;
     scdr << m_data.c_str();
 
@@ -136,6 +146,7 @@ void mind_interfaces::msg::Request::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
 
+    dcdr >> m_topic;
     dcdr >> m_index;
     {
         std::string aux;
@@ -144,6 +155,43 @@ void mind_interfaces::msg::Request::deserialize(
     }
 }
 
+/*!
+ * @brief This function copies the value in member topic
+ * @param _topic New value to be copied in member topic
+ */
+void mind_interfaces::msg::Request::topic(
+        const std::string& _topic)
+{
+    m_topic = _topic;
+}
+
+/*!
+ * @brief This function moves the value in member topic
+ * @param _topic New value to be moved in member topic
+ */
+void mind_interfaces::msg::Request::topic(
+        std::string&& _topic)
+{
+    m_topic = std::move(_topic);
+}
+
+/*!
+ * @brief This function returns a constant reference to member topic
+ * @return Constant reference to member topic
+ */
+const std::string& mind_interfaces::msg::Request::topic() const
+{
+    return m_topic;
+}
+
+/*!
+ * @brief This function returns a reference to member topic
+ * @return Reference to member topic
+ */
+std::string& mind_interfaces::msg::Request::topic()
+{
+    return m_topic;
+}
 /*!
  * @brief This function sets a value in member index
  * @param _index New value for member index

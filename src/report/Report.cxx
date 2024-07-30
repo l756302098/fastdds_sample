@@ -34,11 +34,13 @@ using namespace eprosima::fastcdr::exception;
 
 #include <utility>
 
-#define mind_interfaces_msg_Report_max_cdr_typesize 409605ULL;
+#define mind_interfaces_msg_Report_max_cdr_typesize 1289ULL;
 #define mind_interfaces_msg_Report_max_key_cdr_typesize 0ULL;
 
 mind_interfaces::msg::Report::Report()
 {
+    // string m_topic
+    m_topic ="";
     // string m_data
     m_data ="";
 
@@ -46,17 +48,21 @@ mind_interfaces::msg::Report::Report()
 
 mind_interfaces::msg::Report::~Report()
 {
+
+
 }
 
 mind_interfaces::msg::Report::Report(
         const Report& x)
 {
+    m_topic = x.m_topic;
     m_data = x.m_data;
 }
 
 mind_interfaces::msg::Report::Report(
         Report&& x) noexcept 
 {
+    m_topic = std::move(x.m_topic);
     m_data = std::move(x.m_data);
 }
 
@@ -64,6 +70,7 @@ mind_interfaces::msg::Report& mind_interfaces::msg::Report::operator =(
         const Report& x)
 {
 
+    m_topic = x.m_topic;
     m_data = x.m_data;
 
     return *this;
@@ -73,6 +80,7 @@ mind_interfaces::msg::Report& mind_interfaces::msg::Report::operator =(
         Report&& x) noexcept
 {
 
+    m_topic = std::move(x.m_topic);
     m_data = std::move(x.m_data);
 
     return *this;
@@ -82,7 +90,7 @@ bool mind_interfaces::msg::Report::operator ==(
         const Report& x) const
 {
 
-    return (m_data == x.m_data);
+    return (m_topic == x.m_topic && m_data == x.m_data);
 }
 
 bool mind_interfaces::msg::Report::operator !=(
@@ -106,7 +114,10 @@ size_t mind_interfaces::msg::Report::getCdrSerializedSize(
     size_t initial_alignment = current_alignment;
 
 
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.topic().size() + 1;
+
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.data().size() + 1;
+
 
     return current_alignment - initial_alignment;
 }
@@ -115,6 +126,7 @@ void mind_interfaces::msg::Report::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
 
+    scdr << m_topic.c_str();
     scdr << m_data.c_str();
 
 }
@@ -123,18 +135,57 @@ void mind_interfaces::msg::Report::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
 
+    dcdr >> m_topic;
     {
         std::string aux;
         dcdr >> aux;
         m_data = aux.c_str();
-    }}
+    }
+}
 
+/*!
+ * @brief This function copies the value in member topic
+ * @param _topic New value to be copied in member topic
+ */
+void mind_interfaces::msg::Report::topic(
+        const std::string& _topic)
+{
+    m_topic = _topic;
+}
+
+/*!
+ * @brief This function moves the value in member topic
+ * @param _topic New value to be moved in member topic
+ */
+void mind_interfaces::msg::Report::topic(
+        std::string&& _topic)
+{
+    m_topic = std::move(_topic);
+}
+
+/*!
+ * @brief This function returns a constant reference to member topic
+ * @return Constant reference to member topic
+ */
+const std::string& mind_interfaces::msg::Report::topic() const
+{
+    return m_topic;
+}
+
+/*!
+ * @brief This function returns a reference to member topic
+ * @return Reference to member topic
+ */
+std::string& mind_interfaces::msg::Report::topic()
+{
+    return m_topic;
+}
 /*!
  * @brief This function copies the value in member data
  * @param _data New value to be copied in member data
  */
 void mind_interfaces::msg::Report::data(
-        const eprosima::fastrtps::fixed_string<409600>& _data)
+        const eprosima::fastrtps::fixed_string<1024>& _data)
 {
     m_data = _data;
 }
@@ -144,7 +195,7 @@ void mind_interfaces::msg::Report::data(
  * @param _data New value to be moved in member data
  */
 void mind_interfaces::msg::Report::data(
-        eprosima::fastrtps::fixed_string<409600>&& _data)
+        eprosima::fastrtps::fixed_string<1024>&& _data)
 {
     m_data = std::move(_data);
 }
@@ -153,7 +204,7 @@ void mind_interfaces::msg::Report::data(
  * @brief This function returns a constant reference to member data
  * @return Constant reference to member data
  */
-const eprosima::fastrtps::fixed_string<409600>& mind_interfaces::msg::Report::data() const
+const eprosima::fastrtps::fixed_string<1024>& mind_interfaces::msg::Report::data() const
 {
     return m_data;
 }
@@ -162,7 +213,7 @@ const eprosima::fastrtps::fixed_string<409600>& mind_interfaces::msg::Report::da
  * @brief This function returns a reference to member data
  * @return Reference to member data
  */
-eprosima::fastrtps::fixed_string<409600>& mind_interfaces::msg::Report::data()
+eprosima::fastrtps::fixed_string<1024>& mind_interfaces::msg::Report::data()
 {
     return m_data;
 }

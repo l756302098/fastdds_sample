@@ -28,6 +28,9 @@
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
+#include <fastdds/rtps/resources/ResourceManagement.h>
+#include "../log_define.h"
+#include "../DDSConfig.h"
 
 class ReportPublisher
 {
@@ -39,7 +42,7 @@ public:
 
     bool init(const std::string& topic);
 
-    bool publish(const std::string& data);
+    bool publish(const std::string& topic,const std::string& data);
 
 private:
 
@@ -48,6 +51,7 @@ private:
     eprosima::fastdds::dds::Topic* topic_;
     eprosima::fastdds::dds::DataWriter* writer_;
     eprosima::fastdds::dds::TypeSupport type_;
+    
 
     class PubListener : public eprosima::fastdds::dds::DataWriterListener
     {

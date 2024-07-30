@@ -126,30 +126,55 @@ namespace mind_interfaces {
                     const Report& x) const;
 
             /*!
+             * @brief This function copies the value in member topic
+             * @param _topic New value to be copied in member topic
+             */
+            eProsima_user_DllExport void topic(
+                    const std::string& _topic);
+
+            /*!
+             * @brief This function moves the value in member topic
+             * @param _topic New value to be moved in member topic
+             */
+            eProsima_user_DllExport void topic(
+                    std::string&& _topic);
+
+            /*!
+             * @brief This function returns a constant reference to member topic
+             * @return Constant reference to member topic
+             */
+            eProsima_user_DllExport const std::string& topic() const;
+
+            /*!
+             * @brief This function returns a reference to member topic
+             * @return Reference to member topic
+             */
+            eProsima_user_DllExport std::string& topic();
+            /*!
              * @brief This function copies the value in member data
              * @param _data New value to be copied in member data
              */
             eProsima_user_DllExport void data(
-                    const eprosima::fastrtps::fixed_string<409600>& _data);
+                    const eprosima::fastrtps::fixed_string<1024>& _data);
 
             /*!
              * @brief This function moves the value in member data
              * @param _data New value to be moved in member data
              */
             eProsima_user_DllExport void data(
-                    eprosima::fastrtps::fixed_string<409600>&& _data);
+                    eprosima::fastrtps::fixed_string<1024>&& _data);
 
             /*!
              * @brief This function returns a constant reference to member data
              * @return Constant reference to member data
              */
-            eProsima_user_DllExport const eprosima::fastrtps::fixed_string<409600>& data() const;
+            eProsima_user_DllExport const eprosima::fastrtps::fixed_string<1024>& data() const;
 
             /*!
              * @brief This function returns a reference to member data
              * @return Reference to member data
              */
-            eProsima_user_DllExport eprosima::fastrtps::fixed_string<409600>& data();
+            eProsima_user_DllExport eprosima::fastrtps::fixed_string<1024>& data();
 
             /*!
             * @brief This function returns the maximum serialized size of an object
@@ -210,7 +235,8 @@ namespace mind_interfaces {
 
         private:
 
-            eprosima::fastrtps::fixed_string<409600> m_data;
+            std::string m_topic;
+            eprosima::fastrtps::fixed_string<1024> m_data;
 
         };
     } // namespace msg

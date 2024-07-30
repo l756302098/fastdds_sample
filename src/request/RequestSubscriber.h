@@ -27,7 +27,7 @@
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
-
+#include "../log_define.h"
 class RequestSubscriber
 {
 public:
@@ -36,7 +36,7 @@ public:
 
     virtual ~RequestSubscriber();
 
-    bool init(const std::string& name,std::function<void(const int64_t,const std::string&)> cb = nullptr);
+    bool init(const std::string& name,std::function<void(const int64_t,const std::string&,const std::string&)> cb = nullptr);
 
     void run();
 
@@ -63,7 +63,7 @@ private:
                 eprosima::fastdds::dds::DataReader* reader,
                 const eprosima::fastdds::dds::SubscriptionMatchedStatus& info) override;
 
-        std::function<void(const int64_t,const std::string&)> callback = nullptr;
+        std::function<void(const int64_t,const std::string&,const std::string&)> callback = nullptr;
         int matched = 0;
     }
     listener_;

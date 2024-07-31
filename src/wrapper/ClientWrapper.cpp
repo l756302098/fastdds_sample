@@ -8,7 +8,7 @@ namespace wk {
     {
         if(!is_init_)
         {
-            client_.init(name);
+            client_.init(client_name_);
             is_init_ = true;
         }
         topic_ = name;

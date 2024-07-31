@@ -15,7 +15,7 @@ private:
     bool init;
     SubscriberWrapper hbSub,ipSub,infoSub,stateSub,taskStateSub;
     SubscriberWrapper mapSub,poseSub;
-    ClientWrapper client;
+    ClientWrapper client,defaultClient;
 public:
     logic(/* args */){}
     ~logic(){}
@@ -40,6 +40,7 @@ public:
             std::bind(&logic::OnPose,this,std::placeholders::_1));
         //service
         client.init("/task/create_map");
+        defaultClient.init("/scene/map/info");
     }
 
     bool start()
@@ -48,8 +49,25 @@ public:
         return init;
     }
 
+    void callMap()
+    {
+        std::cout << __func__ << std::endl;
+        std::string respStr{};
+        nlohmann::json msg = nlohmann::json();
+        msg["time"] = 0;
+        if(defaultClient.request(msg.dump(),respStr))
+        {
+            std::cout << "response code:" << respStr << std::endl;
+        }
+        else
+        {
+            std::cout << "request failed." << std::endl;
+        }
+    }
+
     void call()
     {
+        std::cout << __func__ << std::endl;
         std::string respStr{};
         JCreateMapRequest createMapReq;
         createMapReq.time = 0;

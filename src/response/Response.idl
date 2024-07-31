@@ -10,7 +10,7 @@ module mind_interfaces {
 
       int64 index;
 
-      string<1024> data;
+      string<409600> data;
     };
   };
 };

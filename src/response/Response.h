@@ -174,26 +174,26 @@ namespace mind_interfaces {
              * @param _data New value to be copied in member data
              */
             eProsima_user_DllExport void data(
-                    const eprosima::fastrtps::fixed_string<1024>& _data);
+                    const eprosima::fastrtps::fixed_string<409600>& _data);
 
             /*!
              * @brief This function moves the value in member data
              * @param _data New value to be moved in member data
              */
             eProsima_user_DllExport void data(
-                    eprosima::fastrtps::fixed_string<1024>&& _data);
+                    eprosima::fastrtps::fixed_string<409600>&& _data);
 
             /*!
              * @brief This function returns a constant reference to member data
              * @return Constant reference to member data
              */
-            eProsima_user_DllExport const eprosima::fastrtps::fixed_string<1024>& data() const;
+            eProsima_user_DllExport const eprosima::fastrtps::fixed_string<409600>& data() const;
 
             /*!
              * @brief This function returns a reference to member data
              * @return Reference to member data
              */
-            eProsima_user_DllExport eprosima::fastrtps::fixed_string<1024>& data();
+            eProsima_user_DllExport eprosima::fastrtps::fixed_string<409600>& data();
 
             /*!
             * @brief This function returns the maximum serialized size of an object
@@ -256,7 +256,7 @@ namespace mind_interfaces {
 
             std::string m_topic;
             int64_t m_index;
-            eprosima::fastrtps::fixed_string<1024> m_data;
+            eprosima::fastrtps::fixed_string<409600> m_data;
 
         };
     } // namespace msg

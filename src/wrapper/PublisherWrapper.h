@@ -5,7 +5,7 @@ namespace wk {
 class PublisherWrapper
 {
 private:
-    const std::string report_topic_ = "/indemind/topic";
+    const std::string report_topic_ = "/tcl/topic";
     static std::atomic_bool is_init_;
     static ReportPublisher pub_;
     std::string topic_;

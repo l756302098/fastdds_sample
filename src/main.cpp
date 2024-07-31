@@ -6,14 +6,15 @@ int main()
 {
     logic lg;
     lg.init_dds();
-    // while (!lg.start())
-    // {
-    //     /* code */
-    // }
-    lg.call();
-    while (1)
+    while (!lg.start())
     {
         sleep(1);
+    }
+    while (1)
+    {
+        lg.call();
+        sleep(1);
+        lg.callMap();
     }
     
     return 0;

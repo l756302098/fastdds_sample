@@ -16,7 +16,7 @@ struct SubscriberOp
 class SubscriberWrapper
 {
 private:
-    const std::string report_topic_ = "/tcl/topic";
+    const std::string report_topic_ = "/indemind/topic";
     static std::atomic_bool is_init_;
     static ReportSubscriber sub_;
     typedef std::unordered_map<std::string,std::vector<SubscriberOp>> OpMap;

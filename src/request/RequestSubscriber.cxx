@@ -81,8 +81,10 @@ bool RequestSubscriber::init(const std::string& name,std::function<void(const in
     }
 
     //CREATE THE TOPIC
+    std::string topic = wk::PREFIX+name+wk::REQ_SUFFIX;
+    SLOG(INFO) << "topic:" << topic;
     topic_ = participant_->create_topic(
-        wk::PREFIX+name+wk::REQ_SUFFIX,
+        topic,
         type_.get_type_name(),
         TOPIC_QOS_DEFAULT);
     if (topic_ == nullptr)

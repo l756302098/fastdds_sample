@@ -139,7 +139,7 @@ void ReportSubscriber::SubListener::on_data_available(
         {
             // Print your structure data here.
             ++samples;
-            std::cout << "Sample received, count=" << samples  << " data:" << st.data() << std::endl;
+            //std::cout << "Sample received, count=" << samples  << " data:" << st.data() << std::endl;
             if(this->callback)
             {
                 this->callback(st.topic(),st.data().to_string());

@@ -29,8 +29,7 @@ bool PublisherWrapper::publish(const std::string& data)
 {
     if(PublisherWrapper::is_init_)
     {
-        PublisherWrapper::pub_.publish(topic_,data);
-        return true;
+        return PublisherWrapper::pub_.publish(topic_,data);
     }
     return false;
 }

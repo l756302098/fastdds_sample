@@ -7,7 +7,9 @@ SubscriberWrapper::OpMap SubscriberWrapper::del_map_ = {};
 std::shared_mutex SubscriberWrapper::mtx = {};
 std::int64_t SubscriberWrapper::index = 0;
 
-SubscriberWrapper::SubscriberWrapper(/* args */){}
+SubscriberWrapper::SubscriberWrapper(/* args */){
+    std::cout << " self id:" << id_ << std::endl;
+}
 
 SubscriberWrapper::~SubscriberWrapper()
 {
@@ -51,30 +53,31 @@ bool SubscriberWrapper::init(const std::string& topic,std::function<void(const s
         if(it!=SubscriberWrapper::del_map_.end())
         {
             it->second.push_back(so);
+            std::cout << "map push back:" << topic << " id:" << id_ << std::endl;
         }
         else
         {
             std::vector<SubscriberOp> ops;
             ops.push_back(so);
             SubscriberWrapper::del_map_.emplace(std::make_pair(topic,ops));
+            std::cout << "map emplace:" << topic << " id:" << id_ << std::endl;
         }
     }
     topic_ = topic;
+    std::cout << " self id:" << id_ << std::endl;
     return true;
 }
 
 void SubscriberWrapper::on_cb(const std::string& topic,const std::string& data)
 {
     std::lock_guard<std::shared_mutex> guard(mtx);
+    std::cout << __func__ << " " << data << " self id:" << this->id_ << std::endl;
     auto it = SubscriberWrapper::del_map_.find(topic);
     if(it!=SubscriberWrapper::del_map_.end())
     {
         for (const auto& op:it->second)
         {
-            if(op.id == id_)
-            {
-                op.cb(data);
-            }
+            op.cb(data);
         } 
     }
 }

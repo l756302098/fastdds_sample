@@ -140,7 +140,7 @@ void RequestSubscriber::SubListener::on_data_available(
         if (info.valid_data)
         {
             // Print your structure data here.
-            std::cout << "Sample received, index=" << st.index()  << " data:" << st.data() << std::endl;
+            // std::cout << "Sample received, index=" << st.index()  << " data:" << st.data() << std::endl;
             if(this->callback)
             {
                 this->callback(st.index(),st.topic(),st.data().to_string());

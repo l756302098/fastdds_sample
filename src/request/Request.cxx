@@ -34,7 +34,7 @@ using namespace eprosima::fastcdr::exception;
 
 #include <utility>
 
-#define mind_interfaces_msg_Request_max_cdr_typesize 1301ULL;
+#define mind_interfaces_msg_Request_max_cdr_typesize 10517ULL;
 #define mind_interfaces_msg_Request_max_key_cdr_typesize 0ULL;
 
 mind_interfaces::msg::Request::Request()
@@ -225,7 +225,7 @@ int64_t& mind_interfaces::msg::Request::index()
  * @param _data New value to be copied in member data
  */
 void mind_interfaces::msg::Request::data(
-        const eprosima::fastrtps::fixed_string<1024>& _data)
+        const eprosima::fastrtps::fixed_string<10240>& _data)
 {
     m_data = _data;
 }
@@ -235,7 +235,7 @@ void mind_interfaces::msg::Request::data(
  * @param _data New value to be moved in member data
  */
 void mind_interfaces::msg::Request::data(
-        eprosima::fastrtps::fixed_string<1024>&& _data)
+        eprosima::fastrtps::fixed_string<10240>&& _data)
 {
     m_data = std::move(_data);
 }
@@ -244,7 +244,7 @@ void mind_interfaces::msg::Request::data(
  * @brief This function returns a constant reference to member data
  * @return Constant reference to member data
  */
-const eprosima::fastrtps::fixed_string<1024>& mind_interfaces::msg::Request::data() const
+const eprosima::fastrtps::fixed_string<10240>& mind_interfaces::msg::Request::data() const
 {
     return m_data;
 }
@@ -253,7 +253,7 @@ const eprosima::fastrtps::fixed_string<1024>& mind_interfaces::msg::Request::dat
  * @brief This function returns a reference to member data
  * @return Reference to member data
  */
-eprosima::fastrtps::fixed_string<1024>& mind_interfaces::msg::Request::data()
+eprosima::fastrtps::fixed_string<10240>& mind_interfaces::msg::Request::data()
 {
     return m_data;
 }

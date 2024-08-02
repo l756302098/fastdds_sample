@@ -4,7 +4,8 @@
 #include "wrapper/ClientWrapper.h"
 #include "wrapper/PublisherWrapper.h"
 #include "wrapper/SubscriberWrapper.h"
-
+#include <opencv2/core.hpp>
+#include <opencv2/opencv.hpp>
 #include "json_msg/msgHead.h"
 
 using namespace wk;
@@ -16,6 +17,7 @@ private:
     SubscriberWrapper hbSub,ipSub,infoSub,stateSub,taskStateSub;
     SubscriberWrapper mapSub,poseSub;
     ClientWrapper client,defaultClient;
+    PublisherWrapper pubTest;
 public:
     logic(/* args */){}
     ~logic(){}
@@ -41,6 +43,7 @@ public:
         //service
         client.init("/task/create_map");
         defaultClient.init("/scene/map/info");
+        pubTest.init("/img");
     }
 
     bool start()
@@ -82,6 +85,22 @@ public:
         }
     }
 
+    void Publish(){
+        cv::Mat mat = cv::imread("/home/li/Pictures/Screenshots/122.png", cv::IMREAD_UNCHANGED);
+        std::vector<uint8_t> vImg;
+        cv::imencode(".png",mat,vImg);
+        std::uint8_t imgBuff[vImg.size()];
+        std::string strImg = base64_encode(imgBuff, sizeof(imgBuff) / sizeof(imgBuff[0]));
+        nlohmann::json msg = nlohmann::json();
+        msg["time"] = 0;
+        msg["image"] = strImg;
+        std::string data = msg.dump();
+        if(pubTest.publish(data))
+        {
+            std::cout << "publish data success." << std::endl;
+        }
+    }
+
     void OnHeartbeat(const std::string& data)
     {
         std::cout << "data:" << data << std::endl;
@@ -90,7 +109,7 @@ public:
 
     void OnIp(const std::string& data)
     {
-        std::cout << "data:" << data << std::endl;
+        std::cout << __func__ << "data:" << data << std::endl;
         JReportIp ip(data);
         std::cout << "ip:" << ip.ip << " ssid:" << ip.ssid << std::endl;
     }

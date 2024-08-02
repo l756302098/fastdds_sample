@@ -8,7 +8,7 @@ module mind_interfaces {
     struct Report {
       string topic;
 
-      string<409600> data;
+      string<2048000> data;
     };
   };
 };

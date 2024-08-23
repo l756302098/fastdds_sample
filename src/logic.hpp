@@ -17,7 +17,7 @@ private:
     SubscriberWrapper hbSub,ipSub,infoSub,stateSub,taskStateSub;
     SubscriberWrapper mapSub,poseSub;
     ClientWrapper client,defaultClient;
-    PublisherWrapper pubTest;
+    PublisherWrapper pubTest,pubPose,pubheart;
 public:
     logic(/* args */){}
     ~logic(){}
@@ -44,6 +44,25 @@ public:
         client.init("/task/create_map");
         defaultClient.init("/scene/map/info");
         pubTest.init("/img");
+        pubPose.init("/pose");
+        pubheart.init("/beart");
+        // std::thread([&](){
+        //     while (1)
+        //     {
+        //         usleep(10 * 1000);
+        //         json msg = json::object();
+        //         msg["time"] = 0;
+        //         msg["x"] = 1;
+        //         msg["y"] = 2;
+        //         msg["angle"] = 1;
+        //         pubPose.publish(msg.dump());
+
+        //         json hmsg = json::object();
+        //         hmsg["time"] = 0;
+        //         hmsg["ip"] = "127.0.0.1";
+        //         pubheart.publish(hmsg.dump());
+        //     }
+        // }).detach();
     }
 
     bool start()
@@ -98,6 +117,10 @@ public:
         if(pubTest.publish(data))
         {
             std::cout << "publish data success." << std::endl;
+        }
+        else
+        {
+            std::cout << "publish data failed." << std::endl;
         }
     }
 

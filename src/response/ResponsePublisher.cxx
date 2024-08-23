@@ -33,6 +33,7 @@
 #include <chrono>
 
 #include "../DDSConfig.h"
+#include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
 
 using namespace eprosima::fastdds::dds;
 
@@ -60,6 +61,7 @@ ResponsePublisher::~ResponsePublisher()
         participant_->delete_topic(topic_);
     }
     DomainParticipantFactory::get_instance()->delete_participant(participant_);
+    SLOG(INFO) << __func__;
 }
 
 bool ResponsePublisher::init(const std::string& name)
@@ -69,6 +71,9 @@ bool ResponsePublisher::init(const std::string& name)
     //CREATE THE PARTICIPANT
     DomainParticipantQos pqos;
     pqos.name("Participant_pub");
+    pqos.allocation().send_buffers.preallocated_number = 1;
+    pqos.allocation().send_buffers.dynamic = false;
+    pqos.allocation().locators.max_unicast_locators = 4;
     SLOG(INFO) << "ROS_DOMAIN_ID:" << wk::ROS_DOMAIN_ID;
     participant_ = DomainParticipantFactory::get_instance()->create_participant(wk::ROS_DOMAIN_ID, pqos);
     if (participant_ == nullptr)
@@ -98,11 +103,18 @@ bool ResponsePublisher::init(const std::string& name)
 
     // CREATE THE WRITER
     DataWriterQos writer_qos;
+    writer_qos.history().kind = KEEP_LAST_HISTORY_QOS;
+    writer_qos.history().depth = 1;
+    writer_qos.resource_limits().max_samples = 1;
+    writer_qos.resource_limits().max_instances = 1;
+    writer_qos.resource_limits().max_samples_per_instance = 1;
+    writer_qos.resource_limits().allocated_samples = 0;
     // Drop non matching locators
     writer_qos.endpoint().ignore_non_matching_locators = true;
     // The RTPSWriterQos is constructed with history_memory_policy = PREALLOCATED by default
     // Change the history_memory_policy to DYNAMIC_RESERVE
     writer_qos.endpoint().history_memory_policy = eprosima::fastrtps::rtps::DYNAMIC_RESERVE_MEMORY_MODE;
+    //writer_qos.reliability().kind = BEST_EFFORT_RELIABILITY_QOS;
     writer_ = publisher_->create_datawriter(topic_, writer_qos, &listener_);
     if (writer_ == nullptr)
     {

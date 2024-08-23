@@ -29,6 +29,7 @@
 #include "ResponsePubSubTypes.h"
 
 #include "../DDSConfig.h"
+#include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
 
 using namespace eprosima::fastdds::dds;
 
@@ -56,6 +57,7 @@ ResponseSubscriber::~ResponseSubscriber()
         participant_->delete_subscriber(subscriber_);
     }
     DomainParticipantFactory::get_instance()->delete_participant(participant_);
+    SLOG(INFO) << __func__;
 }
 
 bool ResponseSubscriber::init(const std::string& name,std::function<void(const int64_t,const std::string&,const std::string&)> cb)
@@ -63,6 +65,11 @@ bool ResponseSubscriber::init(const std::string& name,std::function<void(const i
     //CREATE THE PARTICIPANT
     DomainParticipantQos pqos;
     pqos.name("Participant_sub");
+    eprosima::fastrtps::rtps::SendBuffersAllocationAttributes sbAttr;
+    sbAttr.preallocated_number = 2;
+    sbAttr.dynamic = false;
+    pqos.allocation().send_buffers = sbAttr;
+    pqos.allocation().locators.max_unicast_locators = 4;
     SLOG(INFO) << "ROS_DOMAIN_ID:" << wk::ROS_DOMAIN_ID;
     participant_ = DomainParticipantFactory::get_instance()->create_participant(wk::ROS_DOMAIN_ID, pqos);
     if (participant_ == nullptr)
@@ -92,9 +99,15 @@ bool ResponseSubscriber::init(const std::string& name,std::function<void(const i
 
     //CREATE THE READER
     DataReaderQos rqos = DATAREADER_QOS_DEFAULT;
-    rqos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    rqos.history().kind = KEEP_LAST_HISTORY_QOS;
+    rqos.history().depth = 1;
+    rqos.resource_limits().max_samples = 1;
+    rqos.resource_limits().max_instances = 1;
+    rqos.resource_limits().max_samples_per_instance = 1;
+    rqos.resource_limits().allocated_samples = 0;
     rqos.endpoint().ignore_non_matching_locators = true;
     rqos.endpoint().history_memory_policy = eprosima::fastrtps::rtps::DYNAMIC_RESERVE_MEMORY_MODE;
+    //rqos.reliability().kind = BEST_EFFORT_RELIABILITY_QOS;
     listener_.callback = cb;
     reader_ = subscriber_->create_datareader(topic_, rqos, &listener_);
     if (reader_ == nullptr)

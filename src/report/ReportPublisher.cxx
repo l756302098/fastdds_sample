@@ -31,6 +31,7 @@
 
 #include <thread>
 #include <chrono>
+#include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
 
 using namespace eprosima::fastdds::dds;
 
@@ -58,6 +59,7 @@ ReportPublisher::~ReportPublisher()
         participant_->delete_topic(topic_);
     }
     DomainParticipantFactory::get_instance()->delete_participant(participant_);
+    SLOG(INFO) << __func__;
 }
 
 bool ReportPublisher::init(const std::string& topic)
@@ -65,6 +67,9 @@ bool ReportPublisher::init(const std::string& topic)
     //CREATE THE PARTICIPANT
     DomainParticipantQos pqos;
     pqos.name("Participant_pub");
+    pqos.allocation().send_buffers.preallocated_number = 1;
+    pqos.allocation().send_buffers.dynamic = false;
+    pqos.allocation().locators.max_unicast_locators = 4;
     SLOG(INFO) << "ROS_DOMAIN_ID:" << wk::ROS_DOMAIN_ID;
     participant_ = DomainParticipantFactory::get_instance()->create_participant(wk::ROS_DOMAIN_ID, pqos);
     if (participant_ == nullptr)
@@ -93,15 +98,20 @@ bool ReportPublisher::init(const std::string& topic)
     }
     // This example uses a DataWriter, but it can also be applied to DataReader entities
     DataWriterQos writer_qos;
+    writer_qos.history().kind = KEEP_LAST_HISTORY_QOS;
+    writer_qos.history().depth = 1;
+    writer_qos.resource_limits().max_samples = 1;
+    writer_qos.resource_limits().max_instances = 1;
+    writer_qos.resource_limits().max_samples_per_instance = 1;
+    writer_qos.resource_limits().allocated_samples = 0;
     // Drop non matching locators
     writer_qos.endpoint().ignore_non_matching_locators = true;
     // The RTPSWriterQos is constructed with history_memory_policy = PREALLOCATED by default
     // Change the history_memory_policy to DYNAMIC_RESERVE
     writer_qos.endpoint().history_memory_policy = eprosima::fastrtps::rtps::DYNAMIC_RESERVE_MEMORY_MODE;
+    //writer_qos.reliability().kind = BEST_EFFORT_RELIABILITY_QOS;
     // Use modified QoS in the creation of the corresponding entity
-    writer_ = publisher_->create_datawriter(topic_, writer_qos);
-    // CREATE THE WRITER
-    writer_ = publisher_->create_datawriter(topic_, DATAWRITER_QOS_DEFAULT, &listener_);
+    writer_ = publisher_->create_datawriter(topic_, writer_qos, &listener_);
     if (writer_ == nullptr)
     {
         return false;
@@ -137,7 +147,7 @@ bool ReportPublisher::publish(const std::string& topic,const std::string& payloa
     //std::cout << __func__ << std::endl;
     while (listener_.matched == 0)
     {
-        SLOG(INFO) << "listener not matched." << payload;
+        //SLOG(INFO) << "listener not matched." << payload;
         return false;
     }
     mind_interfaces::msg::Report st;

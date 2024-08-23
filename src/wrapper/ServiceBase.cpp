@@ -1,7 +1,14 @@
 #include "ServiceBase.h"
 
 namespace wk {
-
+    ServiceBase::ServiceBase()
+    {
+        SLOG(INFO) << __func__;
+    }
+    ServiceBase::~ServiceBase()
+    {
+        SLOG(INFO) << __func__;
+    }
     bool ServiceBase::init(std::string name,std::function<void(const int64_t,const std::string&,const std::string&)> cb)
     {
         if(publisher_.init(name))

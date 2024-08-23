@@ -4,13 +4,18 @@ cmake_minimum_required(VERSION 3.5)
 project (fastdds_samples)
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DMY_DEBUG")
-
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g ")
 # Find requirements
 set(DDS_LIBS ${PROJECT_SOURCE_DIR}/dds/lib/x64)
+include(FindUnwind.cmake)
+
+find_package(OpenCV 3.4 REQUIRED)
 
 include_directories(
     ${PROJECT_SOURCE_DIR}/dds/lib/include
     ${PROJECT_SOURCE_DIR}/include
+    ${OpenCV_INCLUDE_DIRS}
+    ${Unwind_INCLUDE_DIR}
 )
 
 message(STATUS "Configuring dds...")
@@ -53,4 +58,7 @@ target_link_libraries(fastdds_samples
     ddsmsg_lib
     ${DDS_LIBS}/libfastcdr.so
     ${DDS_LIBS}/libfastrtps.so
+    ${OpenCV_LIBS}
+    ${Unwind_LIBRARY} 
+    unwind-x86_64
 )
